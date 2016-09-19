@@ -9,40 +9,61 @@ class Employee
     @boss = boss
   end
 
-  def bonus(multiplier)
-
+  def bonus(multiplier = 1)
     @salary * multiplier
-
-    # return @salary * multiplier if @employee_list.nil?
-    #
-    # @employee_list.each do |emp|
-    #   total = emp.@salary + emp.bonus(1)
-    # end
-    #
-    # total * multiplier
-
   end
 
-end
+end #exit Employee class
 
 
 class Manager < Employee
 
-  def initialize(employee_list)
+  def initialize(name, title, salary, boss)
+      @employee_list = []
+      super(name, title, salary, boss)
+  end
 
-
-      @employee_list = employee_list
+  def add_employee(employee)
+    @employee_list << employee
+    employee.boss = self
   end
 
   def bonus(multiplier)
-    return @salary * multiplier if @employee_list.nil?
-
-    @employee_list.each do |emp|
-      total = emp.@salary + emp.bonus(1)
-    end
-    
-    total * multiplier
+    total_salary * multiplier
+  end
+  #
+  def total_salary
+    accumulator = 0
+    @employee_list.each do |employee|
+      if employee.is_a? (Manager)
+        accumulator += employee.salary + employee.total_salary
+      else
+        accumulator += employee.salary
+      end #end of if
+    end #end of each
+    accumulator
   end
 
 
-end
+end # exit Manager class
+
+
+ned = Manager.new("Ned", "Founder", 1000000, nil)
+
+darren = Manager.new("Darren", "TA Manager", 78000, ned)
+
+shawna = Employee.new("shawna", "TA", 12000, darren)
+
+david = Employee.new("david", "TA", 10000, darren)
+
+ned.add_employee(darren)
+
+darren.add_employee(shawna)
+
+darren.add_employee(david)
+
+# p david.bonus(3)
+# p darren.total_salary
+p darren.bonus(4)
+# p ned.bonus(5)
+# p ned.total_salary
